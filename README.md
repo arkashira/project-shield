@@ -1,15 +1,8 @@
 # Project Shield
-Project Shield is a Python project for managing project scope definitions, tasks, and issues.
-
-## Features
-* Create and edit project scope definitions
-* Assign tasks and issues to specific scope definitions
-* Track and visualize scope progress
+A Python project for managing scope documents and commit history.
 
 ## Usage
-1. Create a new project scope definition using `project_shield.create_scope_definition("Test Scope")`.
-2. Assign tasks and issues to the scope definition using `project_shield.assign_task_to_scope(1, 1)` and `project_shield.assign_issue_to_scope(1, 1)`.
-3. Track scope progress using `project_shield.track_scope_progress(1)`.
+To use this project, create an instance of the `ProjectShield` class, passing in the scope document and a list of commits.
 
 ## Testing
-Run tests using `pytest` command.
+To run the tests, use the command `python -m pytest` in the root directory of the project.
