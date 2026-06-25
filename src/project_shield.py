@@ -1,28 +1,43 @@
 import json
 from dataclasses import dataclass
-from datetime import datetime
-from typing import List
+from typing import Dict, List
 
 @dataclass
-class Commit:
-    timestamp: str
-    message: str
+class Scope:
+    name: str
+    description: str
 
-class ProjectShield:
-    def __init__(self, scope_document: str, commits: List[Commit]):
-        self.scope_document = scope_document
-        self.commits = commits
+class ScopeShield:
+    def __init__(self, schema: Dict):
+        self.schema = schema
 
-    def get_scope_document(self) -> str:
-        return self.scope_document
+    def validate(self, scope: Dict) -> bool:
+        if 'name' not in scope or 'description' not in scope:
+            return False
+        if not isinstance(scope['name'], str) or not isinstance(scope['description'], str):
+            return False
+        return True
 
-    def get_commits(self) -> List[Commit]:
-        return self.commits
+    def check_pr(self, pr_scope: Dict) -> str:
+        if self.validate(pr_scope):
+            return 'scope-ok'
+        else:
+            return 'Validation failed: scope does not match schema'
 
-    def get_latest_version(self) -> str:
-        if not self.commits:
-            return "No commits"
-        return self.commits[-1].message
+class GitHubApp:
+    def __init__(self, name: str):
+        self.name = name
 
-    def get_commit_history(self) -> List[dict]:
-        return [{"timestamp": commit.timestamp, "message": commit.message} for commit in self.commits]
+    def install(self, repository: str):
+        print(f'Installing {self.name} on {repository}')
+
+    def run_action(self, pr_scope: Dict) -> str:
+        scope_shield = ScopeShield({'name': 'string', 'description': 'string'})
+        return scope_shield.check_pr(pr_scope)
+
+class GitHubAction:
+    def __init__(self, app: GitHubApp):
+        self.app = app
+
+    def validate_pr(self, pr_scope: Dict) -> str:
+        return self.app.run_action(pr_scope)

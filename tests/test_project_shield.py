@@ -1,33 +1,38 @@
-from project_shield import ProjectShield, Commit
+from project_shield import ScopeShield, GitHubApp, GitHubAction
 import pytest
 
-def test_get_scope_document():
-    scope_document = "This is a scope document"
-    commits = [Commit("2022-01-01 12:00:00", "Initial commit")]
-    project_shield = ProjectShield(scope_document, commits)
-    assert project_shield.get_scope_document() == scope_document
+def test_scope_shield_validate():
+    scope_shield = ScopeShield({'name': 'string', 'description': 'string'})
+    scope = {'name': 'test', 'description': 'test description'}
+    assert scope_shield.validate(scope) == True
 
-def test_get_commits():
-    scope_document = "This is a scope document"
-    commits = [Commit("2022-01-01 12:00:00", "Initial commit"), Commit("2022-01-02 12:00:00", "Second commit")]
-    project_shield = ProjectShield(scope_document, commits)
-    assert len(project_shield.get_commits()) == 2
+def test_scope_shield_validate_invalid():
+    scope_shield = ScopeShield({'name': 'string', 'description': 'string'})
+    scope = {'name': 123, 'description': 'test description'}
+    assert scope_shield.validate(scope) == False
 
-def test_get_latest_version():
-    scope_document = "This is a scope document"
-    commits = [Commit("2022-01-01 12:00:00", "Initial commit"), Commit("2022-01-02 12:00:00", "Second commit")]
-    project_shield = ProjectShield(scope_document, commits)
-    assert project_shield.get_latest_version() == "Second commit"
+def test_scope_shield_check_pr():
+    scope_shield = ScopeShield({'name': 'string', 'description': 'string'})
+    scope = {'name': 'test', 'description': 'test description'}
+    assert scope_shield.check_pr(scope) == 'scope-ok'
 
-def test_get_commit_history():
-    scope_document = "This is a scope document"
-    commits = [Commit("2022-01-01 12:00:00", "Initial commit"), Commit("2022-01-02 12:00:00", "Second commit")]
-    project_shield = ProjectShield(scope_document, commits)
-    expected_history = [{"timestamp": "2022-01-01 12:00:00", "message": "Initial commit"}, {"timestamp": "2022-01-02 12:00:00", "message": "Second commit"}]
-    assert project_shield.get_commit_history() == expected_history
+def test_scope_shield_check_pr_invalid():
+    scope_shield = ScopeShield({'name': 'string', 'description': 'string'})
+    scope = {'name': 123, 'description': 'test description'}
+    assert scope_shield.check_pr(scope) == 'Validation failed: scope does not match schema'
 
-def test_get_latest_version_no_commits():
-    scope_document = "This is a scope document"
-    commits = []
-    project_shield = ProjectShield(scope_document, commits)
-    assert project_shield.get_latest_version() == "No commits"
+def test_github_app_install():
+    app = GitHubApp('ScopeShield')
+    app.install('test-repo')
+    # No assertion, just testing that it runs without error
+
+def test_github_app_run_action():
+    app = GitHubApp('ScopeShield')
+    scope = {'name': 'test', 'description': 'test description'}
+    assert app.run_action(scope) == 'scope-ok'
+
+def test_github_action_validate_pr():
+    app = GitHubApp('ScopeShield')
+    action = GitHubAction(app)
+    scope = {'name': 'test', 'description': 'test description'}
+    assert action.validate_pr(scope) == 'scope-ok'

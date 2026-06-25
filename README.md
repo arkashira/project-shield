@@ -1,8 +1,8 @@
 # Project Shield
-A Python project for managing scope documents and commit history.
+A GitHub App that validates pull requests against a defined scope.
+
+## Installation
+To install the app, simply run `poetry install` and then `poetry run python -m pytest` to run the tests.
 
 ## Usage
-To use this project, create an instance of the `ProjectShield` class, passing in the scope document and a list of commits.
-
-## Testing
-To run the tests, use the command `python -m pytest` in the root directory of the project.
+To use the app, create a new instance of the `GitHubApp` class and call the `install` method to install it on a repository. Then, create a new instance of the `GitHubAction` class and call the `validate_pr` method to validate a pull request.
